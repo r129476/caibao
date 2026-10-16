@@ -114,6 +114,7 @@
   function available(x,have){return x.split('或').some(p=>have.has(p));}
   function recipes(raw){
     return raw.map((r,id)=>{
+      if(r[5]) return {...r[5],id,name:r[0],tags:r[2],kcal:r[3],steps:r[4].split("|"),reviewed:true};
       const edited=EDITED[r[0]];
       if(edited) return {...edited,id,name:r[0],tags:r[2],kcal:r[3],reviewed:true};
       let required=r[1].map(normalize), optional=[];

@@ -23,7 +23,7 @@ function renderResults(){
   for(const t of ['ready','near']){$('tab-'+t).classList.toggle('active',tab===t);$('tab-'+t).setAttribute('aria-pressed',String(tab===t));}
   $('choose').hidden=tab!=='ready'||!groups.ready.length;
   $('result-title').textContent=!selected.length?'先告诉我，你有什么？':groups.ready.length?`今天有${groups.ready.length}道菜，现在就能做。`:'还差一点，也能吃顿好的。';
-  $('result-summary').textContent=selected.length?`已选${selected.length}种食材 · 常备调料已计入匹配`:'从左侧添加食材，或者先用番茄＋鸡蛋试一试。';
+  $('result-summary').textContent=selected.length?`已选${selected.length}种食材 · 共${ALL.length}道菜谱 · 常备调料已计入匹配`:`菜谱库共${ALL.length}道，先用番茄＋鸡蛋试一试。`;
   $('group-note').textContent=tab==='ready'?'这里的菜，所列必需食材和调料都已具备。':'只展示用到已有食材、还缺1–2种材料的菜；缺少调料也会计入。';
   $('grid').innerHTML=selected.length?list.map(card).join(''):'';
   $('empty').hidden=selected.length&&list.length>0;
@@ -39,7 +39,7 @@ function addInput(){
 }
 function openRecipe(id){
   const r=ALL[id];if(!r)return;const o=C.match(r,selected,pantry),have=new Set(selected.concat(pantry));lastFocus=document.activeElement;
-  $('detail').innerHTML=photo(r,true)+`<div class="detail-body"><span class="eyebrow">今晚好好吃饭</span><h2 id="dish-title">${esc(r.name)}</h2><p class="detail-meta">${r.servings||'原菜谱未标注份量'}${r.minutes?` · 约${r.minutes}分钟（估算）`:''}</p><p class="match ${o.missing.length?'need':'ready'}">${o.missing.length?'还缺：'+o.missing.map(esc).join('、'):'✓ 必需材料已齐'}</p><h3>必需材料</h3><div class="chips">${r.required.map(x=>`<span class="material ${C.available(x,have)?'have':'lack'}">${C.available(x,have)?'✓ ':''}${esc(x)}</span>`).join('')}</div>${r.amounts?'<p class="amounts">'+r.amounts.map(esc).join('；')+'。</p>':'<p class="hint">用量沿用原菜谱步骤；未标明的份量需自行调整。</p>'}${r.optional.length?`<p class="optional">可以省略：${r.optional.map(esc).join('、')}。做法中相应的配料步骤可跳过。</p>`:''}<h3>跟着做</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p class="hint">热量沿用原版估算：约${r.kcal}千卡/份；份量和调料变化会影响结果。</p></div>`;
+  $('detail').innerHTML=photo(r,true)+`<div class="detail-body"><span class="eyebrow">今晚好好吃饭</span><h2 id="dish-title">${esc(r.name)}</h2><p class="detail-meta">${r.servings||'原菜谱未标注份量'}${r.minutes?` · 约${r.minutes}分钟（估算）`:''}</p><p class="match ${o.missing.length?'need':'ready'}">${o.missing.length?'还缺：'+o.missing.map(esc).join('、'):'✓ 必需材料已齐'}</p><h3>必需材料</h3><div class="chips">${r.required.map(x=>`<span class="material ${C.available(x,have)?'have':'lack'}">${C.available(x,have)?'✓ ':''}${esc(x)}</span>`).join('')}</div>${r.amounts?'<p class="amounts">'+r.amounts.map(esc).join('；')+'。</p>':'<p class="hint">用量沿用原菜谱步骤；未标明的份量需自行调整。</p>'}${r.optional.length?`<p class="optional">可以省略：${r.optional.map(esc).join('、')}。做法中相应的配料步骤可跳过。</p>`:''}<h3>跟着做</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol><p class="hint">${r.kcal==null?"本菜谱暂未估算热量。":"热量沿用原版估算：约"+r.kcal+"千卡/份；份量和调料变化会影响结果。"}</p></div>`;
   $('recipe-dialog').showModal();document.body.style.overflow='hidden';$('close-dialog').focus();
 }
 function closeRecipe(){$('recipe-dialog').close();document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
